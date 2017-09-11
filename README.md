@@ -1,8 +1,8 @@
 # MyReads Project [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](https://github.com/standard/standard)
 
-This is abookshelf app that allows you to select and categorize books you have read, are currently reading, or want to read.
+This is a bookshelf app that allows you to select and categorize books you have read, are currently reading, or want to read.
 
-## TL;DR
+## Run
 
 To get started:
 
