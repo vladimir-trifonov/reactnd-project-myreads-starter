@@ -4,7 +4,7 @@ import * as BooksAPI from './apis/books.api'
 import './app.css'
 import BooksList from './components/books-list.component'
 import SearchBooksWithRouter from './components/pages/search-books.page'
-import { getBooksShelves } from './utils/books.utils'
+import { getBooksShelvesIds } from './utils/books.utils'
 
 class BooksApp extends React.Component {
   state = {
@@ -29,13 +29,15 @@ class BooksApp extends React.Component {
   getBooks() {
     BooksAPI.getAll().then((books) => {
       if (books.error) {
+        // In case of error
         return console.error(books.error)
       }
 
-      this.setState({ books, booksShelvesIds: getBooksShelves(books), loaded: true })
+      this.setState({ books, booksShelvesIds: getBooksShelvesIds(books), loaded: true })
     })
   }
 
+  // Update book's shelf
   updateBook(book, shelf) {
     this.setState({ loaded: false })
     return BooksAPI.update(book, shelf).then((booksShelvesIds) => {
@@ -43,12 +45,15 @@ class BooksApp extends React.Component {
 
       const bookFromState = this.state.books.find(b => b.id === book.id)
       if (bookFromState) {
+        // If the book is already on the shelves
         updated = Object.assign({}, bookFromState, {
           shelf: shelf
         })
 
+        // The rest books except the updated
         books = this.state.books.filter(b => b.id !== book.id)
       } else {
+        // Use the book info from the search page to add it to he shelves
         updated = Object.assign({}, book, {
           shelf: shelf
         })
@@ -56,6 +61,7 @@ class BooksApp extends React.Component {
         books = this.state.books.slice()
       }
 
+      // The bboks array is immutable
       books = books.concat([updated])
       this.setState({ books, booksShelvesIds, loaded: true })
     })

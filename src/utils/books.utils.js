@@ -1,7 +1,8 @@
 export const getBooksByShelf = (shelf, books) =>
   (books || []).filter(book => book.shelf === shelf)
 
-export const getBooksShelves = books =>
+// Get the ids of the books, which are added to a shelf
+export const getBooksShelvesIds = books =>
   (books || []).reduce((shelves, book) => {
     if (book.shelf) {
       shelves[book.shelf].push(book.id)
@@ -14,6 +15,7 @@ export const getBooksShelves = books =>
     read: []
   })
 
+// Get object where the kyes are booksIds and the values are shelves titles
 const _getBooksIdsByShelves = booksShelvesIds =>
   Object.keys(booksShelvesIds).reduce((booksIdsByShelves, shelf) => {
     const booksIds = booksShelvesIds[shelf]
@@ -24,6 +26,7 @@ const _getBooksIdsByShelves = booksShelvesIds =>
     return booksIdsByShelves
   }, {})
 
+// Update books shelves
 export const getUpdatedBooks = (books, booksShelvesIds) => {
   if (!booksShelvesIds) {
     return books
