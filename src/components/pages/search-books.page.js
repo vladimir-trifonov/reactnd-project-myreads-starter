@@ -9,7 +9,8 @@ import sortBy from 'sort-by'
 class SearchBooks extends Component {
   static propTypes = {
     location: PropTypes.object,
-    history: PropTypes.object.isRequired
+    history: PropTypes.object.isRequired,
+    onBookUpdate: PropTypes.func.isRequired
   }
 
   state = {
@@ -43,17 +44,32 @@ class SearchBooks extends Component {
     BooksAPI.search(query).then((books) => {
       if (books.error) {
         this.setState({ books: [] })
-        return console.error(books.error)
+        return
       }
 
       this.setState({ books: books })
     })
   }
 
+  bookShelfUpdated(book, shelf) {
+    this.props.onBookUpdate(book, shelf)
+  }
+
+  renderBooks(books) {
+    return books.map(book => 
+      <Book 
+        key={book.id} 
+        {...book} 
+        onShelfUpdate={this.bookShelfUpdated.bind(this)}
+      />
+    )
+  }
+
   render() {
     const { query, books } = this.state
-    const sortedBooks = books.sort(sortBy('title'))
+    const sortedBooks = books.sort(sortBy('id'))
 
+    // TODO: Loader and empty response message
     return (
       <div className='search-books'>
         <div className='search-books-bar'>
@@ -62,14 +78,14 @@ class SearchBooks extends Component {
             <DebounceInput
               value={query}
               debounceTimeout={500}
-              onChange={(event) => this.updateQuery(event.target.value)}
+              onChange={e => this.updateQuery(e.target.value)}
               placeholder='Search by title or author'
             />
           </div>
         </div>
         <div className='search-books-results'>
           <ol className='books-grid'>
-            {sortedBooks.map(book => <Book key={book.id} {...book} />)}
+            {this.renderBooks(sortedBooks)}
           </ol>
         </div>
       </div>

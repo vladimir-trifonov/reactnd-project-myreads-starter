@@ -7,7 +7,22 @@ import { getBooksByShelf } from '../utils/books.utils'
 class BooksList extends Component {
   static propTypes = {
     booksShelves: PropTypes.object.isRequired,
-    books: PropTypes.array.isRequired
+    books: PropTypes.array.isRequired,
+    onBookUpdate: PropTypes.func.isRequired
+  }
+
+  renderBooksShelves() {
+    return Object.keys(this.props.booksShelves).map(shelf => {
+      const booksShelf = this.props.booksShelves[shelf]
+      return (
+        <BooksShelf
+          key={booksShelf.title}
+          title={booksShelf.title}
+          books={getBooksByShelf(shelf, this.props.books)}
+          bookShelfUpdated={this.props.onBookUpdate}
+        />
+      )
+    })
   }
 
   render() {
@@ -18,12 +33,7 @@ class BooksList extends Component {
         </div>
         <div className="list-books-content">
           <div>
-            {Object.keys(this.props.booksShelves).map(shelf => {
-              const booksShelf = this.props.booksShelves[shelf]
-              return (
-                <BooksShelf key={booksShelf.title} title={booksShelf.title} books={getBooksByShelf(shelf, this.props.books)} />
-              )
-            })}
+            {this.renderBooksShelves()}
           </div>
         </div>
         <div className="open-search">
