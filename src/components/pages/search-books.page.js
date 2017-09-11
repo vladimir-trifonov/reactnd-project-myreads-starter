@@ -5,12 +5,14 @@ import DebounceInput from 'react-debounce-input'
 import * as BooksAPI from '../../apis/books.api'
 import Book from '../book.component'
 import sortBy from 'sort-by'
+import {getBooksIdsByShelves} from '../../utils/books.utils'
 
 class SearchBooks extends Component {
   static propTypes = {
     location: PropTypes.object,
     history: PropTypes.object.isRequired,
-    onBookUpdate: PropTypes.func.isRequired
+    onBookUpdate: PropTypes.func.isRequired,
+    booksShelvesIds: PropTypes.object.isRequired
   }
 
   state = {
@@ -29,6 +31,21 @@ class SearchBooks extends Component {
   componentWillReceiveProps(nextProps) {
     const { hash } = nextProps.location
     this.props.location.hash !== hash && this.onSearch(hash.slice(1))
+
+    this.props.booksShelvesIds !== nextProps.booksShelvesIds && this.updateBooks(this.state.books, nextProps.booksShelvesIds)
+  }
+
+  updateBooks(books, booksShelvesIds) {
+    if(!booksShelvesIds) {
+      return this.setState({ books })
+    }
+
+    const bookIdsByShelves = getBooksIdsByShelves(booksShelvesIds)
+    const updated = (books || []).map(book => Object.assign({}, book, {
+      shelf: bookIdsByShelves[book.id] || 'none'
+    }))
+
+    this.setState({ books: updated })
   }
 
   onSearch = (query) => {
@@ -47,7 +64,7 @@ class SearchBooks extends Component {
         return
       }
 
-      this.setState({ books: books })
+      this.updateBooks(books, this.props.booksShelvesIds)
     })
   }
 

@@ -6,15 +6,15 @@ function BooksShelf (props) {
   const sortedBooks = props.books ? props.books.sort(sortBy('id')) : []
 
   const renderBooks = (books) => {
-    return books.map(book => 
-      <Book 
-        key={book.id} 
-        {...book} 
-        onShelfUpdate={props.bookShelfUpdated.bind(this)}
+    return books.map(book =>
+      <Book
+        key={book.id}
+        {...book}
+        onShelfUpdate={props.bookShelfUpdated}
       />
     )
   }
-  
+
   return (
     <div className='bookshelf'>
       <h2 className='bookshelf-title'>{props.title}</h2>

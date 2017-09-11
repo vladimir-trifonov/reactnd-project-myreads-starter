@@ -4,22 +4,19 @@ import * as BooksAPI from './apis/books.api'
 import './app.css'
 import BooksList from './components/books-list.component'
 import SearchBooksWithRouter from './components/pages/search-books.page'
+import { getBooksShelves } from './utils/books.utils'
 
 class BooksApp extends React.Component {
   state = {
-    booksShelves: {
-      currentlyReading: {
-        title: 'Currently Reading',
-        booksIds: []
-      },
-      wantToRead: {
-        title: 'Want to Read',
-        booksIds: []
-      },
-      read: {
-        title: 'Read',
-        booksIds: []
-      }
+    booksShelvesTitles: {
+      currentlyReading: 'Currently Reading',
+      wantToRead: 'Want to Read',
+      read: 'Read'
+    },
+    booksShelvesIds: {
+      currentlyReading: [],
+      wantToRead: [],
+      read: []
     },
     books: []
   }
@@ -34,14 +31,31 @@ class BooksApp extends React.Component {
         return console.error(books.error)
       }
 
-      this.setState({ books })
+      this.setState({ books, booksShelvesIds: getBooksShelves(books) })
     })
   }
 
   updateBook(book, shelf) {
-    return BooksAPI.update(book, shelf).then((booksIdsByShelves) => {
-      // TODO: Update the book shelves
-      // TODO: Update the books if they were loaded
+    return BooksAPI.update(book, shelf).then((booksShelvesIds) => {
+      let books, updated
+
+      const bookFromState = this.state.books.find(b => b.id === book.id)
+      if (bookFromState) {
+        updated = Object.assign({}, bookFromState, {
+          shelf: shelf
+        })
+
+        books = this.state.books.filter(b => b.id !== book.id)
+      } else {
+        updated = Object.assign({}, book, {
+          shelf: shelf
+        })
+
+        books = this.state.books.slice()
+      }
+
+      books = books.concat([updated])
+      this.setState({ books, booksShelvesIds })
     })
   }
 
@@ -51,14 +65,16 @@ class BooksApp extends React.Component {
       <div className='app'>
         <Route exact path='/' render={() => {
           return <BooksList
-            booksShelves={this.state.booksShelves}
+            booksShelvesTitles={this.state.booksShelvesTitles}
             books={this.state.books}
             onBookUpdate={this.updateBook.bind(this)}
           />
         }} />
         <Route path='/search' render={() => {
-          // TODO: Add the book shelves to the props
-          return <SearchBooksWithRouter onBookUpdate={this.updateBook.bind(this)} />
+          return <SearchBooksWithRouter
+            onBookUpdate={this.updateBook.bind(this)}
+            booksShelvesIds={this.state.booksShelvesIds}
+          />
         }} />
       </div>
     )

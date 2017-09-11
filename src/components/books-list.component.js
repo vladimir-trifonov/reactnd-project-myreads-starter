@@ -6,18 +6,18 @@ import { getBooksByShelf } from '../utils/books.utils'
 
 class BooksList extends Component {
   static propTypes = {
-    booksShelves: PropTypes.object.isRequired,
+    booksShelvesTitles: PropTypes.object.isRequired,
     books: PropTypes.array.isRequired,
     onBookUpdate: PropTypes.func.isRequired
   }
 
   renderBooksShelves() {
-    return Object.keys(this.props.booksShelves).map(shelf => {
-      const booksShelf = this.props.booksShelves[shelf]
+    return Object.keys(this.props.booksShelvesTitles).map(shelf => {
+      const booksShelftitle = this.props.booksShelvesTitles[shelf]
       return (
         <BooksShelf
-          key={booksShelf.title}
-          title={booksShelf.title}
+          key={booksShelftitle}
+          title={booksShelftitle}
           books={getBooksByShelf(shelf, this.props.books)}
           bookShelfUpdated={this.props.onBookUpdate}
         />
