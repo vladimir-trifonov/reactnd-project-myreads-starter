@@ -5,7 +5,8 @@ import DebounceInput from 'react-debounce-input'
 import * as BooksAPI from '../../apis/books.api'
 import Book from '../book.component'
 import sortBy from 'sort-by'
-import {getBooksIdsByShelves} from '../../utils/books.utils'
+import { getUpdatedBooks } from '../../utils/books.utils'
+import Loader from 'react-loader'
 
 class SearchBooks extends Component {
   static propTypes = {
@@ -17,7 +18,8 @@ class SearchBooks extends Component {
 
   state = {
     books: [],
-    query: this.props.location.hash.slice(1)
+    query: this.props.location.hash.slice(1),
+    loaded: false
   }
 
   updateQuery(query) {
@@ -32,25 +34,15 @@ class SearchBooks extends Component {
     const { hash } = nextProps.location
     this.props.location.hash !== hash && this.onSearch(hash.slice(1))
 
-    this.props.booksShelvesIds !== nextProps.booksShelvesIds && this.updateBooks(this.state.books, nextProps.booksShelvesIds)
-  }
-
-  updateBooks(books, booksShelvesIds) {
-    if(!booksShelvesIds) {
-      return this.setState({ books })
+    if (this.props.booksShelvesIds !== nextProps.booksShelvesIds) {
+      const updated = getUpdatedBooks(this.state.books, nextProps.booksShelvesIds)
+      this.setState({ books: updated })
     }
-
-    const bookIdsByShelves = getBooksIdsByShelves(booksShelvesIds)
-    const updated = (books || []).map(book => Object.assign({}, book, {
-      shelf: bookIdsByShelves[book.id] || 'none'
-    }))
-
-    this.setState({ books: updated })
   }
 
   onSearch = (query) => {
     if (query === '') {
-      this.setState({ books: [], query })
+      this.setState({ books: [], query, loaded: true })
     } else {
       this.setState({ query })
       this.searchBooks(query)
@@ -58,25 +50,29 @@ class SearchBooks extends Component {
   }
 
   searchBooks(query) {
+    this.setState({ loaded: false })
     BooksAPI.search(query).then((books) => {
       if (books.error) {
-        this.setState({ books: [] })
+        this.setState({ books: [], loaded: true })
         return
       }
 
-      this.updateBooks(books, this.props.booksShelvesIds)
+      const updated = getUpdatedBooks(books, this.props.booksShelvesIds)
+      this.setState({ books: updated, loaded: true })
     })
   }
 
   bookShelfUpdated(book, shelf) {
+    this.setState({ loaded: false })
     this.props.onBookUpdate(book, shelf)
+      .then(() => this.setState({ loaded: true }))
   }
 
   renderBooks(books) {
-    return books.map(book => 
-      <Book 
-        key={book.id} 
-        {...book} 
+    return books.map(book =>
+      <Book
+        key={book.id}
+        {...book}
         onShelfUpdate={this.bookShelfUpdated.bind(this)}
       />
     )
@@ -86,7 +82,6 @@ class SearchBooks extends Component {
     const { query, books } = this.state
     const sortedBooks = books.sort(sortBy('id'))
 
-    // TODO: Loader and empty response message
     return (
       <div className='search-books'>
         <div className='search-books-bar'>
@@ -101,9 +96,11 @@ class SearchBooks extends Component {
           </div>
         </div>
         <div className='search-books-results'>
-          <ol className='books-grid'>
-            {this.renderBooks(sortedBooks)}
-          </ol>
+          <Loader loaded={this.state.loaded} options={{opacity: 0.25}}>
+            <ol className='books-grid'>
+              {this.renderBooks(sortedBooks)}
+            </ol>
+          </Loader>
         </div>
       </div>
     )

@@ -18,7 +18,8 @@ class BooksApp extends React.Component {
       wantToRead: [],
       read: []
     },
-    books: []
+    books: [],
+    loaded: false
   }
 
   componentDidMount() {
@@ -31,11 +32,12 @@ class BooksApp extends React.Component {
         return console.error(books.error)
       }
 
-      this.setState({ books, booksShelvesIds: getBooksShelves(books) })
+      this.setState({ books, booksShelvesIds: getBooksShelves(books), loaded: true })
     })
   }
 
   updateBook(book, shelf) {
+    this.setState({ loaded: false })
     return BooksAPI.update(book, shelf).then((booksShelvesIds) => {
       let books, updated
 
@@ -55,7 +57,7 @@ class BooksApp extends React.Component {
       }
 
       books = books.concat([updated])
-      this.setState({ books, booksShelvesIds })
+      this.setState({ books, booksShelvesIds, loaded: true })
     })
   }
 
@@ -68,6 +70,7 @@ class BooksApp extends React.Component {
             booksShelvesTitles={this.state.booksShelvesTitles}
             books={this.state.books}
             onBookUpdate={this.updateBook.bind(this)}
+            loaded={this.state.loaded}
           />
         }} />
         <Route path='/search' render={() => {

@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import BooksShelf from './books-shelf.component'
 import { getBooksByShelf } from '../utils/books.utils'
+import Loader from 'react-loader'
 
 class BooksList extends Component {
   static propTypes = {
     booksShelvesTitles: PropTypes.object.isRequired,
     books: PropTypes.array.isRequired,
-    onBookUpdate: PropTypes.func.isRequired
+    onBookUpdate: PropTypes.func.isRequired,
+    loaded: PropTypes.bool.isRequired
   }
 
   renderBooksShelves() {
@@ -32,12 +34,12 @@ class BooksList extends Component {
           <h1>MyReads</h1>
         </div>
         <div className="list-books-content">
-          <div>
+          <Loader loaded={this.props.loaded}>
             {this.renderBooksShelves()}
-          </div>
+          </Loader>
         </div>
         <div className="open-search">
-          <Link to='/search'>Add a book</Link>
+          <Link to='/search'>Search</Link>
         </div>
       </div>
     )

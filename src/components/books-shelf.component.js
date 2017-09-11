@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import Book from './book.component'
 import sortBy from 'sort-by'
 
@@ -25,6 +26,11 @@ function BooksShelf (props) {
       </div>
     </div>
   )
+}
+
+BooksShelf.propTypes = {
+  books: PropTypes.array,
+  title: PropTypes.string.isRequired
 }
 
 export default BooksShelf

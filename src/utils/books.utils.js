@@ -14,7 +14,7 @@ export const getBooksShelves = books =>
     read: []
   })
 
-export const getBooksIdsByShelves = booksShelvesIds =>
+const _getBooksIdsByShelves = booksShelvesIds =>
   Object.keys(booksShelvesIds).reduce((booksIdsByShelves, shelf) => {
     const booksIds = booksShelvesIds[shelf]
     booksIds.forEach(id => {
@@ -23,3 +23,16 @@ export const getBooksIdsByShelves = booksShelvesIds =>
 
     return booksIdsByShelves
   }, {})
+
+export const getUpdatedBooks = (books, booksShelvesIds) => {
+  if (!booksShelvesIds) {
+    return books
+  }
+
+  const bookIdsByShelves = _getBooksIdsByShelves(booksShelvesIds)
+  const updated = (books || []).map(book => Object.assign({}, book, {
+    shelf: bookIdsByShelves[book.id] || 'none'
+  }))
+
+  return updated
+}
