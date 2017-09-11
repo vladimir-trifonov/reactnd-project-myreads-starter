@@ -96,7 +96,7 @@ class SearchBooks extends Component {
           </div>
         </div>
         <div className='search-books-results'>
-          <Loader loaded={this.state.loaded} options={{opacity: 0.25}}>
+          <Loader loaded={this.state.loaded}>
             <ol className='books-grid'>
               {this.renderBooks(sortedBooks)}
             </ol>
