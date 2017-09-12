@@ -1,13 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-function Book (props) {
+function BookComponent (props) {
   return (
     <div className='book'>
       <div className='book-top'>
         <div className='book-cover' style={{
-          width: 128,
-          height: 193,
           backgroundImage: `url("${props.imageLinks.smallThumbnail}")`
         }} />
         <div className='book-shelf-changer'>
@@ -23,12 +21,12 @@ function Book (props) {
         </div>
       </div>
       <div className='book-title'>{props.title}</div>
-      <div className='book-authors'>{(props.authors || []).join(', ')}</div>
+      <div className='book-authors'>{props.authors ? props.authors.join(', ') : ''}</div>
     </div>
   )
 }
 
-Book.propTypes = {
+BookComponent.propTypes = {
   imageLinks: PropTypes.object,
   authors: PropTypes.array,
   title: PropTypes.string,
@@ -36,4 +34,4 @@ Book.propTypes = {
   onShelfUpdate: PropTypes.func
 }
 
-export default Book
+export default BookComponent

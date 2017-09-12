@@ -3,12 +3,12 @@ import { Link, withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import DebounceInput from 'react-debounce-input'
 import * as BooksAPI from '../../apis/books.api'
-import Book from '../book.component'
+import BookComponent from '../book.component'
 import sortBy from 'sort-by'
 import { getUpdatedBooks } from '../../utils/books.utils'
 import Loader from 'react-loader'
 
-class SearchBooks extends Component {
+class SearchBooksPage extends Component {
   static propTypes = {
     location: PropTypes.object,
     history: PropTypes.object.isRequired,
@@ -78,7 +78,7 @@ class SearchBooks extends Component {
 
   renderBooks(books) {
     return books.map(book =>
-      <Book
+      <BookComponent
         key={book.id}
         {...book}
         onShelfUpdate={this.bookShelfUpdated.bind(this)}
@@ -115,6 +115,6 @@ class SearchBooks extends Component {
   }
 }
 
-const SearchBooksWithRouter = withRouter(SearchBooks)
+const SearchBooksPageWithRouter = withRouter(SearchBooksPage)
 
-export default SearchBooksWithRouter
+export default SearchBooksPageWithRouter

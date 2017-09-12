@@ -1,14 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Book from './book.component'
+import BookComponent from './book.component'
 import sortBy from 'sort-by'
 
-function BooksShelf (props) {
+function BooksShelfComponent (props) {
   const sortedBooks = props.books ? props.books.sort(sortBy('id')) : []
 
   const renderBooks = (books) => {
     return books.map(book =>
-      <Book
+      <BookComponent
         key={book.id}
         {...book}
         onShelfUpdate={props.bookShelfUpdated}
@@ -28,9 +28,9 @@ function BooksShelf (props) {
   )
 }
 
-BooksShelf.propTypes = {
+BooksShelfComponent.propTypes = {
   books: PropTypes.array,
   title: PropTypes.string.isRequired
 }
 
-export default BooksShelf
+export default BooksShelfComponent

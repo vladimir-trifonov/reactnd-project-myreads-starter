@@ -2,8 +2,8 @@ import React from 'react'
 import { Route } from 'react-router-dom'
 import * as BooksAPI from './apis/books.api'
 import './app.css'
-import BooksList from './components/books-list.component'
-import SearchBooksWithRouter from './components/pages/search-books.page'
+import BooksListComponent from './components/books-list.component'
+import SearchBooksPageWithRouter from './components/pages/search-books.page'
 import { getBooksShelvesIds } from './utils/books.utils'
 
 class BooksApp extends React.Component {
@@ -68,22 +68,21 @@ class BooksApp extends React.Component {
   }
 
   render() {
+    const {books, loaded, booksShelvesTitles, booksShelvesIds} = this.state
     return (
       <div className='app'>
-        <Route exact path='/' render={() => {
-          return <BooksList
-            booksShelvesTitles={this.state.booksShelvesTitles}
-            books={this.state.books}
+        <Route exact path='/' render={() => <BooksListComponent
+            booksShelvesTitles={booksShelvesTitles}
+            books={books}
+            loaded={loaded}
             onBookUpdate={this.updateBook.bind(this)}
-            loaded={this.state.loaded}
-          />
-        }} />
-        <Route path='/search' render={() => {
-          return <SearchBooksWithRouter
+          />}
+        />
+        <Route path='/search' render={() => <SearchBooksPageWithRouter
+            booksShelvesIds={booksShelvesIds}
             onBookUpdate={this.updateBook.bind(this)}
-            booksShelvesIds={this.state.booksShelvesIds}
-          />
-        }} />
+          />} 
+        />
       </div>
     )
   }
