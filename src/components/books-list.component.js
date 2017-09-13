@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import BooksShelf from './books-shelf.component'
+import BooksShelfComponent from './books-shelf.component'
 import { getBooksByShelf } from '../utils/books.utils'
 import Loader from 'react-loader'
 
-class BooksList extends Component {
+class BooksListComponent extends Component {
   static propTypes = {
     booksShelvesTitles: PropTypes.object.isRequired,
     books: PropTypes.array.isRequired,
@@ -17,7 +17,7 @@ class BooksList extends Component {
     return Object.keys(this.props.booksShelvesTitles).map(shelf => {
       const booksShelftitle = this.props.booksShelvesTitles[shelf]
       return (
-        <BooksShelf
+        <BooksShelfComponent
           key={booksShelftitle}
           title={booksShelftitle}
           books={getBooksByShelf(shelf, this.props.books)}
@@ -46,4 +46,4 @@ class BooksList extends Component {
   }
 }
 
-export default BooksList
+export default BooksListComponent
